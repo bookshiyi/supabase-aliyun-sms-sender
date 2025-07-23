@@ -64,13 +64,6 @@ services:
 
 3. 重新创建`docker compose`（需要环境变量生效）
 
-## 调试 
-
-- `gotrue`封装了错误的具体消息内容，即便云函数返回了具体错误信息，前端也无法获取到，只能得到类似 `Internal error` 500 的错误。
-- 每次修改`index.ts`代码后，需要通过命令 `docker compose restart supabase-functions` 重启edge-functions服务，才能生效。
-- 查看`gotrue`日志：`docker logs -f supabase-auth` 
-- 查看`edge-functions`日志：`docker logs -f supabase-edge-functions`
-
 ## 使用
 
 - 前端调用(REST)：
@@ -86,6 +79,14 @@ const { data, error } = await supabase.auth.signInWithOtp({
   phone: '+13012341234',
 })
 ```
+
+## 调试 
+
+- `gotrue`封装了错误的具体消息内容，即便云函数返回了具体错误信息，前端也无法获取到，只能得到类似 `Internal error` 500 的错误。
+- 每次修改`index.ts`代码后，需要通过命令 `docker compose restart supabase-functions` 重启edge-functions服务，才能生效。
+- 查看`gotrue`日志：`docker logs -f supabase-auth` 
+- 查看`edge-functions`日志：`docker logs -f supabase-edge-functions`
+
 
 ## 参考
 - https://supabase.com/docs/guides/auth/auth-hooks/send-sms-hook
