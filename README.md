@@ -9,23 +9,30 @@
 - 时序图：
 ```mermaid
 sequenceDiagram
-    participant 前端
-    participant auth
-    participant edge-functions
-    participant main
-    participant aliyun-sms-sender
+    participant frontend
+    box Container
+        participant auth
+        participant edge-functions
+    end
+    box Deno
+        participant main
+        participant aliyun-sms-sender
+    end
+    box AlibabaCloud
     participant AliyunSMS
+    end
 
-    前端->>auth: 请求发送短信验证码
+    frontend->>auth: 请求发送短信验证码
     auth->>edge-functions: 触发 send_sms_hook
     edge-functions->>main: 事件转发
     main->>aliyun-sms-sender: 路由到云函数
     aliyun-sms-sender->>AliyunSMS: 调用短信发送API
+    note over AliyunSMS: 向运营商提起短信请求
     AliyunSMS-->>aliyun-sms-sender: 返回结果
     aliyun-sms-sender-->>main: 返回结果
     main-->>edge-functions: 返回结果
     edge-functions-->>auth: 返回结果
-    auth-->>前端: 返回验证码发送状态
+    auth-->>frontend: 返回验证码发送状态
 ```
 
 ## 配置
@@ -34,18 +41,18 @@ sequenceDiagram
 
 2. 修改`compose.yaml` 配置:
 
-``` yaml
+``` diff
 services:
     # ...
     auth:
         # ...
-        extra_hosts:
-            - "host.docker.internal:host-gateway"
+++      extra_hosts:
+++          - "host.docker.internal:host-gateway"
         environment:
             #...
-            GOTRUE_HOOK_SEND_SMS_ENABLED: "true"
-            GOTRUE_HOOK_SEND_SMS_URI: "http://host.docker.internal:8000/functions/v1/supabase-aliyun-sms-sender"
-            GOTRUE_HOOK_SEND_SMS_SECRETS: "v1,whsec_REPLACE_WITH_YOUR_SECRET"
+++          GOTRUE_HOOK_SEND_SMS_ENABLED: "true"
+++          GOTRUE_HOOK_SEND_SMS_URI: "http://host.docker.internal:8000/functions/v1/supabase-aliyun-sms-sender"
+++          GOTRUE_HOOK_SEND_SMS_SECRETS: "v1,whsec_REPLACE_WITH_YOUR_SECRET"
             #...
         #...
     #...
@@ -53,11 +60,11 @@ services:
         #...
         environment:
             #...
-            ALIYUN_ACCESS_KEY_ID: "REPLACE_WITH_YOUR_ACCESS_KEY_ID"
-            ALIYUN_ACCESS_KEY_SECRET: "REPLACE_WITH_YOUR_ACCESS_KEY_SECRET"
-            ALIYUN_SMS_SIGN_NAME: "REPLACE_WITH_YOUR_SIGN_NAME"
-            ALIYUN_SMS_TEMPLATE_CODE: "REPLACE_WITH_YOUR_TEMPLATE_CODE"
-            SEND_SMS_HOOK_SECRET: "v1,whsec_REPLACE_WITH_YOUR_SECRET"
+++          ALIYUN_ACCESS_KEY_ID: "REPLACE_WITH_YOUR_ACCESS_KEY_ID"
+++          ALIYUN_ACCESS_KEY_SECRET: "REPLACE_WITH_YOUR_ACCESS_KEY_SECRET"
+++          ALIYUN_SMS_SIGN_NAME: "REPLACE_WITH_YOUR_SIGN_NAME"
+++          ALIYUN_SMS_TEMPLATE_CODE: "REPLACE_WITH_YOUR_TEMPLATE_CODE"
+++          SEND_SMS_HOOK_SECRET: "v1,whsec_REPLACE_WITH_YOUR_SECRET"
         #...
     #...
 ```
