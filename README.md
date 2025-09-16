@@ -6,7 +6,6 @@
 
 - 解决Supabase官方未支持国内的短信服务商问题
 - 函数内会验证webhook签名，防止接口被滥用
-- 时序图：
 ```mermaid
 sequenceDiagram
     participant frontend
