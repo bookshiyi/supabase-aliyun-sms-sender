@@ -2,10 +2,14 @@
 
 适配Supabase的[`send_sms_hook`](https://supabase.com/docs/guides/auth/auth-hooks/send-sms-hook)的[阿里云短信](https://api.aliyun.com/document/Dysmsapi/2017-05-25/SendSms)发送云函数，运行在`edge-functions`容器中。
 
+📺Bilibili视频: [Supabase调用阿里云短信API，给大陆+86用户发送验证码](https://www.bilibili.com/video/BV1a3xezPEyy/)
+
 ## 特点
 
 - 解决Supabase官方未支持国内的短信服务商问题
+- 非入侵方案，无论官方还是私有化部署实例均可使用
 - 函数内会验证webhook签名，防止接口被滥用
+
 ```mermaid
 sequenceDiagram
     participant frontend
